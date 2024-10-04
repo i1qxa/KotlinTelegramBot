@@ -9,14 +9,37 @@ fun main() {
     val dictionary = mutableListOf<Word>()
     File(FILE_NAME).readLines().forEach { wordItem ->
         val splitLine = wordItem.split("|")
+        val correctAnswerCount = try {
+            splitLine[2].toInt()
+        } catch (e: Exception) {
+            0
+        }
         try {
-            dictionary.add(Word(splitLine[0], splitLine[1], splitLine[2].toIntOrNull() ?: 0))
-        }catch (e:Exception){
+            dictionary.add(Word(splitLine[0], splitLine[1], correctAnswerCount))
+        } catch (e: Exception) {
             throw RuntimeException("Слово или оригинал пустые.")
         }
     }
-    println(dictionary.joinToString(separator = "\n"))
+    printMenuInfo()
+    while (true) {
+        when (readln()) {
+            "1" -> println("Нажата кнопка\"1\"")
+            "2" -> println("Нажата кнопка\"2\"")
+            "0" -> break
+            else -> println("Неизвестная команда")
+        }
+    }
+//    println(dictionary.joinToString(separator = "\n"))
 
+}
+
+fun printMenuInfo() {
+    println(
+        "Меню:\n" +
+                "1 - Учить слова\n" +
+                "2 - Статистика\n" +
+                "0 - Выход"
+    )
 }
 
 data class Word(
