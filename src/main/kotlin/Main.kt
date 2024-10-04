@@ -24,7 +24,7 @@ fun main() {
     while (true) {
         when (readln()) {
             "1" -> println("Нажата кнопка\"1\"")
-            "2" -> println("Нажата кнопка\"2\"")
+            "2" -> printStatistic(dictionary)
             "0" -> break
             else -> println("Неизвестная команда")
         }
@@ -40,6 +40,13 @@ fun printMenuInfo() {
                 "2 - Статистика\n" +
                 "0 - Выход"
     )
+}
+
+fun printStatistic(dictionary: List<Word>) {
+    val wordsCount = dictionary.size
+    val studyWordCount = dictionary.filter { it.correctAnswerCount >= 3 }.size
+    val studyWordPercent = ((studyWordCount.toDouble() / wordsCount) * 100).toInt()
+    println("Выучено $studyWordCount из $wordsCount | $studyWordPercent%")
 }
 
 data class Word(
