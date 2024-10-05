@@ -17,7 +17,7 @@ fun main() {
         try {
             dictionary.add(Word(splitLine[0], splitLine[1], correctAnswerCount))
         } catch (e: Exception) {
-            throw RuntimeException("Слово или оригинал пустые.")
+            println("Слово или оригинал пустые.")
         }
     }
     printMenuInfo()
@@ -29,7 +29,6 @@ fun main() {
             else -> println("Неизвестная команда")
         }
     }
-//    println(dictionary.joinToString(separator = "\n"))
 
 }
 
