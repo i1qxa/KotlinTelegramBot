@@ -3,6 +3,7 @@ package org.example
 import java.io.File
 
 const val FILE_NAME = "words.txt"
+const val MIN_CORRECT_ANSWER_COUNT = 3
 
 fun main() {
 
@@ -17,7 +18,7 @@ fun main() {
         try {
             dictionary.add(Word(splitLine[0], splitLine[1], correctAnswerCount))
         } catch (e: Exception) {
-            throw RuntimeException("Слово или оригинал пустые.")
+            println("Слово или оригинал пустые.")
         }
     }
     printMenuInfo()
@@ -29,7 +30,6 @@ fun main() {
             else -> println("Неизвестная команда")
         }
     }
-//    println(dictionary.joinToString(separator = "\n"))
 
 }
 
@@ -44,7 +44,7 @@ fun printMenuInfo() {
 
 fun printStatistic(dictionary: List<Word>) {
     val wordsCount = dictionary.size
-    val studyWordCount = dictionary.filter { it.correctAnswerCount >= 3 }.size
+    val studyWordCount = dictionary.filter { it.correctAnswerCount >= MIN_CORRECT_ANSWER_COUNT }.size
     val studyWordPercent = ((studyWordCount.toDouble() / wordsCount) * 100).toInt()
     println("Выучено $studyWordCount из $wordsCount | $studyWordPercent%")
 }
