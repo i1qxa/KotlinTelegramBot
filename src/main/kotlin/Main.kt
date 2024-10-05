@@ -13,6 +13,7 @@ fun main() {
         val correctAnswerCount = try {
             splitLine[2].toInt()
         } catch (e: Exception) {
+            println("Нет информации о количестве повторений этого слова")
             0
         }
         try {
