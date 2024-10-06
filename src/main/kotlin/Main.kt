@@ -25,13 +25,47 @@ fun main() {
     printMenuInfo()
     while (true) {
         when (readln()) {
-            "1" -> println("Нажата кнопка\"1\"")
+            "1" -> learnWords(dictionary)
             "2" -> printStatistic(dictionary)
             "0" -> break
             else -> println("Неизвестная команда")
         }
     }
 
+}
+
+fun learnWords(dictionary: List<Word>) {
+    println("Для выхода из режима изучения введите \"0\"")
+    val listOfNewWords = dictionary.filter { it.correctAnswerCount < MIN_CORRECT_ANSWER_COUNT }
+    if (listOfNewWords.isEmpty()) {
+        println("Все слова выучены")
+        return
+    }
+    do {
+        val wordForTranslate = listOfNewWords.shuffled().first()
+        val listOfVariant =
+            dictionary.shuffled().filter { it != wordForTranslate }.sortedBy { it.correctAnswerCount }.take(3)
+                .toMutableList()
+        listOfVariant.add(wordForTranslate)
+        listOfVariant.shuffle()
+        println("Как переводится слово: ${wordForTranslate.original}")
+        var counter = 1
+        listOfVariant.forEach {
+            println("${counter++} - ${it.translated}")
+        }
+        when (val answer = readln().toIntOrNull()) {
+            in 1..4 -> {
+                println("Вы выбрали: ${listOfVariant[answer!! - 1]}")
+            }
+
+            0 -> {
+                printMenuInfo()
+                return
+            }
+
+            else -> println("Не правильно выбран вариант ответа")
+        }
+    } while (true)
 }
 
 fun printMenuInfo() {
