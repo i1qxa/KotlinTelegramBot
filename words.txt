@@ -2,5 +2,5 @@ hello|привет
 dog|собака|2
 cat|кошка
 table|стол|3
-apple|яблоко|1
-tomato|помидор|0
+apple|яблоко|4
+tomato|помидор|5

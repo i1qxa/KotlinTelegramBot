@@ -4,6 +4,7 @@ import java.io.File
 
 const val FILE_NAME = "words.txt"
 const val MIN_CORRECT_ANSWER_COUNT = 3
+const val AMOUNT_OF_WRONG_OPTIONS = 3
 
 fun main() {
 
@@ -37,25 +38,29 @@ fun main() {
 fun learnWords(dictionary: List<Word>) {
     println("Для выхода из режима изучения введите \"0\"")
     val listOfNewWords = dictionary.filter { it.correctAnswerCount < MIN_CORRECT_ANSWER_COUNT }
+    val listOfLearnedWords = dictionary.filter { it.correctAnswerCount >= MIN_CORRECT_ANSWER_COUNT }
     if (listOfNewWords.isEmpty()) {
         println("Все слова выучены")
         return
     }
     do {
         val wordForTranslate = listOfNewWords.shuffled().first()
-        val listOfVariant =
-            dictionary.shuffled().filter { it != wordForTranslate }.sortedBy { it.correctAnswerCount }.take(3)
-                .toMutableList()
-        listOfVariant.add(wordForTranslate)
-        listOfVariant.shuffle()
+        val listOfOptions =
+            listOfNewWords.shuffled().filter { it != wordForTranslate }.take(3).toMutableList()
+        if (listOfOptions.size < AMOUNT_OF_WRONG_OPTIONS) {
+            val optionsRemaining = AMOUNT_OF_WRONG_OPTIONS - listOfOptions.size
+            listOfOptions.addAll(listOfLearnedWords.shuffled().take(optionsRemaining))
+        }
+        listOfOptions.add(wordForTranslate)
+        listOfOptions.shuffle()
         println("Как переводится слово: ${wordForTranslate.original}")
         var counter = 1
-        listOfVariant.forEach {
+        listOfOptions.forEach {
             println("${counter++} - ${it.translated}")
         }
         when (val answer = readln().toIntOrNull()) {
             in 1..4 -> {
-                println("Вы выбрали: ${listOfVariant[answer!! - 1]}")
+                println("Вы выбрали: ${listOfOptions[answer!! - 1]}")
             }
 
             0 -> {
@@ -63,7 +68,7 @@ fun learnWords(dictionary: List<Word>) {
                 return
             }
 
-            else -> println("Не правильно выбран вариант ответа")
+            else -> println("Не правильно выбран вариант ответа. Необходимо выбрать одно из четырех слов(1,2,3,4) или 0 для возврата в главное меню")
         }
     } while (true)
 }
