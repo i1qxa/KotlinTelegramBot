@@ -5,15 +5,22 @@ data class Question(
     val answer: Word,
 ) {
 
-    private lateinit var questionAsList: List<Word>
+//    private lateinit var questionAsList: List<Word>
 
-    fun getQuestionAsList(): List<Word> {
+    val questionAsList by lazy {
         val listQuestion = listVariants.toMutableList()
         listQuestion.add(answer)
         listQuestion.shuffle()
-        questionAsList = listQuestion
-        return questionAsList
+        listQuestion
     }
+
+//    fun getQuestionAsList(): List<Word> {
+//        val listQuestion = listVariants.toMutableList()
+//        listQuestion.add(answer)
+//        listQuestion.shuffle()
+//        questionAsList = listQuestion
+//        return questionAsList
+//    }
 
     fun checkAnswer(variantNum: Int):Boolean {
         val index = variantNum - 1
