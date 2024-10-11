@@ -5,8 +5,6 @@ data class Question(
     val answer: Word,
 ) {
 
-//    private lateinit var questionAsList: List<Word>
-
     val questionAsList by lazy {
         val listQuestion = listVariants.toMutableList()
         listQuestion.add(answer)
@@ -14,17 +12,23 @@ data class Question(
         listQuestion
     }
 
-//    fun getQuestionAsList(): List<Word> {
-//        val listQuestion = listVariants.toMutableList()
-//        listQuestion.add(answer)
-//        listQuestion.shuffle()
-//        questionAsList = listQuestion
-//        return questionAsList
-//    }
-
-    fun checkAnswer(variantNum: Int):Boolean {
+    fun checkAnswer(variantNum: Int): Boolean {
         val index = variantNum - 1
-        return questionAsList[index] == answer
+        return try {
+            questionAsList[index] == answer
+        } catch (e: Exception) {
+            println("Вариант ответа должен быть в пределах 1..4")
+            false
+        }
+    }
+
+    fun printQuestion() {
+        println("Как переводится слово: ${answer.original}")
+        var counter = 1
+        questionAsList.forEach {
+            println("${counter++} - ${it.translated}")
+        }
+        println("----------\n0 - Меню")
     }
 
 }
