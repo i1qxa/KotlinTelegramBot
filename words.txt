@@ -1,6 +1,6 @@
 hello|привет|3
-dog|собака|0
+dog|собака|2
 cat|кошка|3
 table|стол|1
-apple|яблоко|asd
+apple|яблоко|1
 tomato|помидор|3

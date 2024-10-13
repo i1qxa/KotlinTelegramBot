@@ -20,7 +20,6 @@ fun main() {
 }
 
 fun learnWords(trainer: LearnWordsTrainer) {
-    val mutableDictionary = trainer.dictionary
     do {
         val question = trainer.getNextQuestion()
         if (question == null) {
@@ -31,15 +30,18 @@ fun learnWords(trainer: LearnWordsTrainer) {
             question.printQuestion()
             when (val userAnswerInput = readln().toIntOrNull()) {
                 in 1..4 -> {
-                    if (question.checkAnswer(userAnswerInput!!)) {
-                        trainer.dictionary.replaceAll {
-                            if (it == question.answer) question.answer.copy(
-                                correctAnswerCount = question.answer.correctAnswerCount + 1
-                            ) else it
-                        }
-                        trainer.saveDictionary()
-                        println("Правильно!")
-                    } else println("Неправильно! ${question.answer.original} - это ${question.answer.translated}")
+                    userAnswerInput?.let {
+                        if (question.checkAnswer(it)) {
+                            trainer.dictionary.replaceAll { userAnswerInput ->
+                                if (userAnswerInput == question.answer) question.answer.copy(
+                                    correctAnswerCount = question.answer.correctAnswerCount + 1
+                                ) else userAnswerInput
+                            }
+                            trainer.saveDictionary()
+                            println("Правильно!")
+                        } else println("Неправильно! ${question.answer.original} - это ${question.answer.translated}")
+                    }
+
                 }
 
                 0 -> {
