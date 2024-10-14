@@ -6,9 +6,14 @@ const val AMOUNT_OF_WRONG_OPTIONS = 3
 
 fun main() {
 
-    val trainer = LearnWordsTrainer()
-    printMenuInfo()
+    val trainer = try {
+        LearnWordsTrainer()
+    } catch (e:Exception){
+        println("Не корректный файл")
+        return
+    }
     while (true) {
+        printMenuInfo()
         when (readln()) {
             "1" -> learnWords(trainer)
             "2" -> println(trainer.getStatistics())

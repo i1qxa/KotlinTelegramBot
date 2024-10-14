@@ -9,16 +9,20 @@ class LearnWordsTrainer {
 
     init {
         loadDictionary()
+        if (dictionary.isEmpty()) throw IllegalStateException("Некорректный файл")
     }
 
     private fun loadDictionary() {
         File(FILE_NAME).readLines().forEach { wordItem ->
             val splitLine = wordItem.split("|")
-            val correctAnswerCount = splitLine[2].toIntOrNull() ?: 0
+            val correctAnswerCount = try {
+                splitLine[2].toIntOrNull() ?: 0
+            } catch (e:Exception){
+                0
+            }
             try {
                 dictionary.add(Word(splitLine[0], splitLine[1], correctAnswerCount))
-            } catch (e: Exception) {
-                println("Слово или оригинал пустые.")
+            } catch (_: Exception) {
             }
         }
     }
