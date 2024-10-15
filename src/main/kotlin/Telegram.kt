@@ -7,7 +7,7 @@ import java.net.http.HttpResponse
 
 const val TG_TOKEN_ENV_KEY_NAME = "tgToken"
 
-fun main(){
+fun main() {
 
     val botToken = System.getenv()[TG_TOKEN_ENV_KEY_NAME]
     val urlGetMe = "https://api.telegram.org/bot$botToken/getMe"
