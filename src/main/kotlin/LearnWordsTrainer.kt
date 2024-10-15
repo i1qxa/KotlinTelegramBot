@@ -2,7 +2,10 @@ package org.example
 
 import java.io.File
 
-class LearnWordsTrainer {
+class LearnWordsTrainer(
+    private val minCorrectAnswerCount:Int = MIN_CORRECT_ANSWER_COUNT,
+    private val amountOfWrongOptions:Int = AMOUNT_OF_WRONG_OPTIONS,
+    ) {
 
 
     val dictionary = mutableListOf<Word>()
@@ -33,7 +36,7 @@ class LearnWordsTrainer {
 
     fun getStatistics(): Statistics {
         val wordsCount = dictionary.size
-        val studyWordCount = dictionary.filter { it.correctAnswerCount >= MIN_CORRECT_ANSWER_COUNT }.size
+        val studyWordCount = dictionary.filter { it.correctAnswerCount >= minCorrectAnswerCount }.size
         val studyWordPercent = ((studyWordCount.toDouble() / wordsCount) * 100).toInt()
         return Statistics(
             wordsCount,
@@ -43,16 +46,16 @@ class LearnWordsTrainer {
     }
 
     fun getNextQuestion(): Question? {
-        val listOfNewWords = dictionary.filter { it.correctAnswerCount < MIN_CORRECT_ANSWER_COUNT }
+        val listOfNewWords = dictionary.filter { it.correctAnswerCount < minCorrectAnswerCount }
         if (listOfNewWords.isEmpty()) {
             return null
         }
-        val listOfLearnedWords = dictionary.filter { it.correctAnswerCount >= MIN_CORRECT_ANSWER_COUNT }
+        val listOfLearnedWords = dictionary.filter { it.correctAnswerCount >= minCorrectAnswerCount }
         val answer = listOfNewWords.shuffled()[0]
         val listOfOptions =
-            listOfNewWords.shuffled().filter { it != answer }.take(AMOUNT_OF_WRONG_OPTIONS).toMutableList()
-        if (listOfOptions.size < AMOUNT_OF_WRONG_OPTIONS) {
-            val optionsRemain = AMOUNT_OF_WRONG_OPTIONS - listOfOptions.size
+            listOfNewWords.shuffled().filter { it != answer }.take(amountOfWrongOptions).toMutableList()
+        if (listOfOptions.size < amountOfWrongOptions) {
+            val optionsRemain = amountOfWrongOptions - listOfOptions.size
             listOfOptions.addAll(listOfLearnedWords.shuffled().take(optionsRemain))
         }
         return Question(listOfOptions, answer)
