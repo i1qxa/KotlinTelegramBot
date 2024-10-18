@@ -5,6 +5,9 @@ import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 
+val messageTextRegex = "\"text\":\"(.+?)\"".toRegex()
+val updateIdRegex = "\"update_id\":(.+?),".toRegex()
+
 fun main(args: Array<String>) {
 
     val botToken = args[0]
@@ -30,14 +33,12 @@ fun getUpdates(botToken: String, updateId: Int): String {
 }
 
 fun getMsgText(updates: String): String? {
-    val messageTextRegex = "\"text\":\"(.+?)\"".toRegex()
     val matchResult = messageTextRegex.find(updates)
     return matchResult?.groups?.get(1)?.value
 }
 
 
 fun getUpdateId(updates: String): Int? {
-    val updateIdRegex = "\"update_id\":(.+?),".toRegex()
     val matchResult = updateIdRegex.find(updates)
     return matchResult?.groups?.get(1)?.value?.toIntOrNull()
 }
