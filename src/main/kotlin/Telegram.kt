@@ -1,5 +1,9 @@
 package org.example
 
+import org.example.tg_servise.TelegramBotService
+import org.example.tg_servise.TgButtons
+import org.example.tg_servise.TgCommand
+
 private val messageTextRegex = "\"text\":\"(.+?)\"".toRegex()
 private val updateIdRegex = "\"update_id\":(.+?),".toRegex()
 private val chatIdRegex = "\"chat\":\\{\"id\":(.+?),".toRegex()
@@ -22,7 +26,7 @@ fun main(args: Array<String>) {
         val msg = getMsgText(updates)
         println(msg)
         getChatId(updates)?.let { chatId ->
-            TgCommand.getTgCommandFromString(msg)?.let { command ->
+            TgCommand.Companion.getTgCommandFromString(msg)?.let { command ->
                 when (command) {
                     TgCommand.HELLO -> {
                         tgBotService.sendMessage(chatId, HELLO_MSG)
@@ -73,6 +77,6 @@ private fun getChatId(updates: String): Int? {
 
 private fun getData(updates: String): TgButtons? {
     val matchResult = dataRegex.find(updates)
-    return TgButtons.getBtnFromString(matchResult?.groups?.get(1)?.value)
+    return TgButtons.Companion.getBtnFromString(matchResult?.groups?.get(1)?.value)
 }
 

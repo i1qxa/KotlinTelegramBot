@@ -1,4 +1,4 @@
-package org.example
+package org.example.tg_servise
 
 enum class TgCommand() {
     HELLO,
