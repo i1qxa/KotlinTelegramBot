@@ -3,9 +3,9 @@ package org.example
 import java.io.File
 
 class LearnWordsTrainer(
-    private val minCorrectAnswerCount:Int = MIN_CORRECT_ANSWER_COUNT,
-    private val amountOfWrongOptions:Int = AMOUNT_OF_WRONG_OPTIONS,
-    ) {
+    private val minCorrectAnswerCount: Int = MIN_CORRECT_ANSWER_COUNT,
+    private val amountOfWrongOptions: Int = AMOUNT_OF_WRONG_OPTIONS,
+) {
 
 
     val dictionary = mutableListOf<Word>()
@@ -20,7 +20,7 @@ class LearnWordsTrainer(
             val splitLine = wordItem.split("|")
             val correctAnswerCount = try {
                 splitLine[2].toIntOrNull() ?: 0
-            } catch (e:Exception){
+            } catch (e: Exception) {
                 0
             }
             try {
@@ -61,4 +61,12 @@ class LearnWordsTrainer(
         return Question(listOfOptions, answer)
     }
 
+}
+
+data class Word(
+    val original: String,
+    val translated: String,
+    val correctAnswerCount: Int,
+) {
+    fun toFileString() = "$original|$translated|$correctAnswerCount"
 }
