@@ -1,7 +1,7 @@
 package org.example
 
 import org.example.tg_servise.TelegramBotService
-import org.example.tg_servise.TgButtons
+import org.example.tg_servise.TgButtonsCallback
 import org.example.tg_servise.TgCommand
 
 private val messageTextRegex = "\"text\":\"(.+?)\"".toRegex()
@@ -23,37 +23,35 @@ fun main(args: Array<String>) {
         getUpdateId(updates)?.let {
             updateId = it + 1
         }
-        val msg = getMsgText(updates)
+        val msg = getMsgText(updates) ?: ""
         println(msg)
-        getChatId(updates)?.let { chatId ->
-            TgCommand.Companion.getTgCommandFromString(msg)?.let { command ->
-                when (command) {
-                    TgCommand.HELLO -> {
-                        tgBotService.sendMessage(chatId, HELLO_MSG)
-                    }
-
-                    TgCommand.START -> {
-                        tgBotService.sendMenu(chatId)
-                    }
-
-                    TgCommand.UNKNOWN -> {
-                        Unit
-                    }
-                }
+        val chatId = getChatId(updates) ?: continue
+        val command = TgCommand.getTgCommandFromString(msg)
+        when (command) {
+            TgCommand.HELLO -> {
+                tgBotService.sendMessage(chatId, HELLO_MSG)
             }
-            getData(updates)?.let { btnClicked ->
-                when (btnClicked) {
-                    TgButtons.LEARN_WORDS -> {
-                        TODO("Need to implement Learning Words")
-                    }
 
-                    TgButtons.STATISTICS -> {
-                        tgBotService.sendMessage(chatId, "Выучено 10 из 10 слов 100%")
-                    }
+            TgCommand.START -> {
+                tgBotService.sendMenu(chatId)
+            }
 
-                    TgButtons.UNKNOWN -> {
-                        Unit
-                    }
+            TgCommand.UNKNOWN -> {
+                Unit
+            }
+        }
+        getData(updates)?.let { btnClicked ->
+            when (btnClicked) {
+                TgButtonsCallback.LEARN_WORDS -> {
+                    TODO("Need to implement Learning Words")
+                }
+
+                TgButtonsCallback.STATISTICS -> {
+                    tgBotService.sendMessage(chatId, "Выучено 10 из 10 слов 100%")
+                }
+
+                TgButtonsCallback.UNKNOWN -> {
+                    Unit
                 }
             }
         }
@@ -75,8 +73,8 @@ private fun getChatId(updates: String): Int? {
     return matchResult?.groups?.get(1)?.value?.toIntOrNull()
 }
 
-private fun getData(updates: String): TgButtons? {
-    val matchResult = dataRegex.find(updates)
-    return TgButtons.Companion.getBtnFromString(matchResult?.groups?.get(1)?.value)
-}
+private fun getData(updates: String): TgButtonsCallback? =
+    dataRegex.find(updates)
+        ?.groups?.get(1)?.value
+        ?.let { TgButtonsCallback.getBtnFromString(it) }
 

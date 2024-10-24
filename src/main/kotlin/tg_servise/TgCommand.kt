@@ -1,19 +1,15 @@
 package org.example.tg_servise
 
-enum class TgCommand() {
-    HELLO,
-    START,
-    UNKNOWN;
+enum class TgCommand(val command: String) {
+    HELLO("Hello"),
+    START("/start"),
+    UNKNOWN("");
 
     companion object {
-        fun getTgCommandFromString(commandStr: String?): TgCommand? {
-            return when (commandStr) {
-                "Hello" -> HELLO
-                "/start" -> START
-                "" -> null
-                null -> null
-                else -> UNKNOWN
-            }
+        fun getTgCommandFromString(commandStr: String): TgCommand {
+            return TgCommand.entries.find {
+                it.command == commandStr
+            } ?: UNKNOWN
         }
     }
 

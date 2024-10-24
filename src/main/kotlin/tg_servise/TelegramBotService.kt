@@ -33,7 +33,7 @@ class TelegramBotService(private val token: String) {
 
     fun sendMenu(chatId: Int) {
         val urlSendMenu = "$BASE_URL$token/sendMessage"
-        println(TgButtons.STATISTICS)
+        println(TgButtonsCallback.STATISTICS)
         val sendMenuBody = """
             {
                 "chat_id":$chatId,
@@ -43,11 +43,11 @@ class TelegramBotService(private val token: String) {
                         [
                             {    
                             "text":"Учить слова",
-                            "callback_data":"${TgButtons.LEARN_WORDS.btnDataString}"
+                            "callback_data":"${TgButtonsCallback.LEARN_WORDS.btnDataString}"
                             },
                             {
                             "text":"Статистика",
-                            "callback_data":"${TgButtons.STATISTICS.btnDataString}"
+                            "callback_data":"${TgButtonsCallback.STATISTICS.btnDataString}"
                             }
                         ]
                     ]
