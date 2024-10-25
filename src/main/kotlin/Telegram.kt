@@ -47,7 +47,7 @@ fun main(args: Array<String>) {
                 }
 
                 TgButtonsCallback.STATISTICS -> {
-                    tgBotService.sendMessage(chatId, "Выучено 10 из 10 слов 100%")
+                    tgBotService.sendMessage(chatId, trainer.getStatistics().toString())
                 }
 
                 TgButtonsCallback.UNKNOWN -> {
