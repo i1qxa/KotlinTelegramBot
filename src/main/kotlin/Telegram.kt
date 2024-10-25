@@ -68,9 +68,9 @@ private fun getUpdateId(updates: String): Int? {
     return matchResult?.groups?.get(1)?.value?.toIntOrNull()
 }
 
-private fun getChatId(updates: String): Int? {
+private fun getChatId(updates: String): Long? {
     val matchResult = chatIdRegex.find(updates)
-    return matchResult?.groups?.get(1)?.value?.toIntOrNull()
+    return matchResult?.groups?.get(1)?.value?.toLongOrNull()
 }
 
 private fun getData(updates: String): TgButtonsCallback? =
