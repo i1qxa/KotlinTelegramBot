@@ -1,5 +1,6 @@
 package org.example.tg_servise
 
+import org.example.Question
 import java.net.URI
 import java.net.URLEncoder
 import java.net.http.HttpClient
@@ -48,6 +49,45 @@ class TelegramBotService(private val token: String) {
                             {
                             "text":"Статистика",
                             "callback_data":"${TgButtonsCallback.STATISTICS.btnDataString}"
+                            }
+                        ]
+                    ]
+                }
+            }
+        """.trimIndent()
+        val requestSendMenu = HttpRequest.newBuilder().uri(URI.create(urlSendMenu))
+            .header("Content-type", "application/json")
+            .POST(HttpRequest.BodyPublishers.ofString(sendMenuBody))
+            .build()
+        client.send(requestSendMenu, HttpResponse.BodyHandlers.ofString()).body()
+    }
+
+    fun sendQuestion(chatId: Long, question: Question){
+        val urlSendMenu = "$BASE_URL$token/sendMessage"
+        val sendMenuBody = """
+            {
+                "chat_id":$chatId,
+                "text":"${question.answer.original}",
+                "reply_markup":{
+                    "inline_keyboard":[
+                        [
+                            {    
+                            "text":"1) ${question.questionAsList[0].translated}",
+                            "callback_data":"${TgButtonsCallback.OPTION_ONE.btnDataString}"
+                            },
+                            {
+                            "text":"2) ${question.questionAsList[1].translated}",
+                            "callback_data":"${TgButtonsCallback.OPTION_TWO.btnDataString}"
+                            }
+                        ],
+                        [
+                            {    
+                            "text":"3) ${question.questionAsList[2].translated}",
+                            "callback_data":"${TgButtonsCallback.OPTION_THREE.btnDataString}"
+                            },
+                            {
+                            "text":"4) ${question.questionAsList[3].translated}",
+                            "callback_data":"${TgButtonsCallback.OPTION_FOUR.btnDataString}"
                             }
                         ]
                     ]
