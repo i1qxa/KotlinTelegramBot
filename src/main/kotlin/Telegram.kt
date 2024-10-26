@@ -17,7 +17,6 @@ fun main(args: Array<String>) {
     val tgBotService = TelegramBotService(botToken)
     var updateId = 0
     val trainer = LearnWordsTrainer()
-    var question: Question? = null
     while (true) {
         Thread.sleep(TG_REFRESH_TIME_IN_MILS)
         val updates = tgBotService.getUpdates(updateId)
@@ -44,12 +43,7 @@ fun main(args: Array<String>) {
         getData(updates)?.let { btnClicked ->
             when (btnClicked) {
                 TgButtonsCallback.LEARN_WORDS -> {
-                    question = trainer.getNextQuestion()
-                    if (question == null){
-                        tgBotService.sendMessage(chatId, "Поздравляем, все слова выучены!")
-                    }else{
-                        tgBotService.sendQuestion(chatId, question)
-                    }
+                    checkNextQuestionAndSend(trainer, tgBotService, chatId)
                 }
 
                 TgButtonsCallback.STATISTICS -> {
@@ -88,4 +82,17 @@ private fun getData(updates: String): TgButtonsCallback? =
     dataRegex.find(updates)
         ?.groups?.get(1)?.value
         ?.let { TgButtonsCallback.getBtnFromString(it) }
+
+private fun checkNextQuestionAndSend(
+    trainer: LearnWordsTrainer,
+    telegramBotService: TelegramBotService,
+    chatId: Long
+){
+    val question = trainer.getNextQuestion()
+    if (question == null){
+        telegramBotService.sendMessage(chatId, "Поздравляем, все слова выучены!")
+    }else{
+        telegramBotService.sendQuestion(chatId, question)
+    }
+}
 
