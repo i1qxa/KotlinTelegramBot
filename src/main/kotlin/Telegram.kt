@@ -53,11 +53,6 @@ fun main(args: Array<String>) {
                 TgButtonsCallback.UNKNOWN -> {
                     Unit
                 }
-
-                TgButtonsCallback.OPTION_ONE -> TODO()
-                TgButtonsCallback.OPTION_TWO -> TODO()
-                TgButtonsCallback.OPTION_THREE -> TODO()
-                TgButtonsCallback.OPTION_FOUR -> TODO()
             }
         }
     }
@@ -87,12 +82,11 @@ private fun checkNextQuestionAndSend(
     trainer: LearnWordsTrainer,
     telegramBotService: TelegramBotService,
     chatId: Long
-){
+) {
     val question = trainer.getNextQuestion()
-    if (question == null){
+    if (question == null) {
         telegramBotService.sendMessage(chatId, "Поздравляем, все слова выучены!")
-    }else{
+    } else {
         telegramBotService.sendQuestion(chatId, question)
     }
 }
-

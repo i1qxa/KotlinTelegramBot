@@ -1,12 +1,12 @@
 package org.example
 
 data class Question(
-    val listVariants: List<Word>,
+    val listOptions: List<Word>,
     val answer: Word,
 ) {
 
     val questionAsList by lazy {
-        val listQuestion = listVariants.toMutableList()
+        val listQuestion = listOptions.toMutableList()
         listQuestion.add(answer)
         listQuestion.shuffle()
         listQuestion

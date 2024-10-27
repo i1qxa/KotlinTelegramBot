@@ -11,6 +11,7 @@ import java.nio.charset.StandardCharsets
 private const val BASE_URL = "https://api.telegram.org/bot"
 const val LEARN_WORDS_CLICKED = "learn_words_clicked"
 const val STATISTICS_CLICKED = "statistics_clicked"
+const val CALLBACK_DATA_ANSWER_PREFIX = "answer_"
 
 class TelegramBotService(private val token: String) {
 
@@ -62,34 +63,25 @@ class TelegramBotService(private val token: String) {
         client.send(requestSendMenu, HttpResponse.BodyHandlers.ofString()).body()
     }
 
-    fun sendQuestion(chatId: Long, question: Question){
+    fun sendQuestion(chatId: Long, question: Question) {
         val urlSendMenu = "$BASE_URL$token/sendMessage"
+        val optionsListAsJson = question.questionAsList.mapIndexed { index, word ->
+            """
+                [
+                    {    
+                        "text":"${index + 1}) ${word.translated}",
+                        "callback_data":"$CALLBACK_DATA_ANSWER_PREFIX$index"
+                    }
+                ]
+            """.trimIndent()
+        }
         val sendMenuBody = """
             {
                 "chat_id":$chatId,
                 "text":"${question.answer.original}",
                 "reply_markup":{
                     "inline_keyboard":[
-                        [
-                            {    
-                            "text":"1) ${question.questionAsList[0].translated}",
-                            "callback_data":"${TgButtonsCallback.OPTION_ONE.btnDataString}"
-                            },
-                            {
-                            "text":"2) ${question.questionAsList[1].translated}",
-                            "callback_data":"${TgButtonsCallback.OPTION_TWO.btnDataString}"
-                            }
-                        ],
-                        [
-                            {    
-                            "text":"3) ${question.questionAsList[2].translated}",
-                            "callback_data":"${TgButtonsCallback.OPTION_THREE.btnDataString}"
-                            },
-                            {
-                            "text":"4) ${question.questionAsList[3].translated}",
-                            "callback_data":"${TgButtonsCallback.OPTION_FOUR.btnDataString}"
-                            }
-                        ]
+                        ${optionsListAsJson.joinToString(separator = ",\n")}
                     ]
                 }
             }
