@@ -43,7 +43,7 @@ fun main(args: Array<String>) {
         getData(updates)?.let { btnClicked ->
             when (btnClicked) {
                 TgButtonsCallback.LEARN_WORDS -> {
-                    TODO("Need to implement Learning Words")
+                    checkNextQuestionAndSend(trainer, tgBotService, chatId)
                 }
 
                 TgButtonsCallback.STATISTICS -> {
@@ -78,3 +78,15 @@ private fun getData(updates: String): TgButtonsCallback? =
         ?.groups?.get(1)?.value
         ?.let { TgButtonsCallback.getBtnFromString(it) }
 
+private fun checkNextQuestionAndSend(
+    trainer: LearnWordsTrainer,
+    telegramBotService: TelegramBotService,
+    chatId: Long
+) {
+    val question = trainer.getNextQuestion()
+    if (question == null) {
+        telegramBotService.sendMessage(chatId, "Поздравляем, все слова выучены!")
+    } else {
+        telegramBotService.sendQuestion(chatId, question)
+    }
+}
