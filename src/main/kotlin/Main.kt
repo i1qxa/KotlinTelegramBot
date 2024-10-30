@@ -8,7 +8,7 @@ fun main() {
 
     val trainer = try {
         LearnWordsTrainer()
-    } catch (e:Exception){
+    } catch (e: Exception) {
         println("Не корректный файл")
         return
     }
