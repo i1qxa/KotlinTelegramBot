@@ -7,7 +7,7 @@ import org.example.tg_servise.TgCommand
 
 private val messageTextRegex = "\"text\":\"(.+?)\"".toRegex()
 private val updateIdRegex = "\"update_id\":(.+?),".toRegex()
-private val chatIdRegex = "\"chat\":\\{\"id\":(.+?),".toRegex()
+private val chatIdRegex = "\"chat\":\\{\"id\":(-*\\d+),".toRegex()
 private val dataRegex = "\"data\":\"(.+?)\"".toRegex()
 private val optionRegex = "\"data\":\"$CALLBACK_DATA_ANSWER_PREFIX([0-9])\"".toRegex()
 private const val TG_REFRESH_TIME_IN_MILS = 2000L
@@ -47,7 +47,12 @@ fun main(args: Array<String>) {
             currentQuestion?.let { question ->
                 if (question.checkAnswer(option + 1)) {
                     tgBotService.sendMessage(chatId, "Правильно!")
-                    trainer.dictionary.replaceAll { if (it == question.answer) question.answer.copy(correctAnswerCount = (question.answer.correctAnswerCount + 1)) else it }
+                    trainer.dictionary.replaceAll {
+                        if (it == question.answer)
+                            question.answer.copy(correctAnswerCount = (question.answer.correctAnswerCount + 1))
+                        else
+                            it
+                    }
                     trainer.saveDictionary()
                 } else {
                     tgBotService.sendMessage(
