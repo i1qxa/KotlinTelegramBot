@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.example.Question
+import org.example.Response
 import java.net.URI
 import java.net.URLEncoder
 import java.net.http.HttpClient
@@ -20,6 +21,7 @@ const val CALLBACK_DATA_ANSWER_PREFIX = "answer_"
 class TelegramBotService(private val token: String) {
 
     private val client = HttpClient.newBuilder().build()
+    private val json = Json { ignoreUnknownKeys = true }
 
     fun sendMessage(chatId: Long, text: String) {
         val encoded = URLEncoder.encode(
@@ -31,13 +33,14 @@ class TelegramBotService(private val token: String) {
         client.send(requestSendMessage, HttpResponse.BodyHandlers.ofString()).body()
     }
 
-    fun getUpdates(updateId: Long): String {
+    fun getUpdates(updateId: Long): Response {
         val urlGetUpdates = "$BASE_URL$token/getUpdates?offset=$updateId"
         val requestGetUpdates = HttpRequest.newBuilder().uri(URI.create(urlGetUpdates)).build()
-        return client.send(requestGetUpdates, HttpResponse.BodyHandlers.ofString()).body()
+        val update = client.send(requestGetUpdates, HttpResponse.BodyHandlers.ofString()).body()
+        return json.decodeFromString<Response>(update)
     }
 
-    fun sendMenu(json: Json, chatId: Long) {
+    fun sendMenu(chatId: Long) {
         val urlSendMenu = "$BASE_URL$token/sendMessage"
         val requestMenu = RequestMenu(
             chatId,
@@ -59,21 +62,21 @@ class TelegramBotService(private val token: String) {
         client.send(requestSendMenu, HttpResponse.BodyHandlers.ofString()).body()
     }
 
-    fun sendQuestion(json: Json, chatId: Long, question: Question) {
+    fun sendQuestion(chatId: Long, question: Question) {
         val urlSendMenu = "$BASE_URL$token/sendMessage"
+        val listOfKeyBoard = question.questionAsList.mapIndexed { index, word ->
+            listOf(
+                InlineKeyBoard(
+                    word.translated,
+                    "$CALLBACK_DATA_ANSWER_PREFIX$index"
+                )
+            )
+        }.toMutableList()
+        listOfKeyBoard.add(listOf(InlineKeyBoard("В меню", "/start")))
         val requestMenu = RequestMenu(
             chatId,
             question.answer.original,
-            ReplyMarkup(
-                listOf(
-                    question.questionAsList.mapIndexed { index, word ->
-                        InlineKeyBoard(
-                            word.translated,
-                            "$CALLBACK_DATA_ANSWER_PREFIX$index"
-                        )
-                    }
-                )
-            )
+            ReplyMarkup(listOfKeyBoard)
         )
         val requestBody = json.encodeToString(requestMenu)
 

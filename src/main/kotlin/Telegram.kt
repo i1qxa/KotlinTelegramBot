@@ -2,7 +2,6 @@ package org.example
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
 import org.example.tg_servise.CALLBACK_DATA_ANSWER_PREFIX
 import org.example.tg_servise.TelegramBotService
 import org.example.tg_servise.TgButtonsCallback
@@ -13,7 +12,6 @@ private const val HELLO_MSG = "Hello"
 
 fun main(args: Array<String>) {
 
-    val json = Json { ignoreUnknownKeys = true }
     val botToken = args[0]
     val tgBotService = TelegramBotService(botToken)
     var updateId = 0L
@@ -22,12 +20,11 @@ fun main(args: Array<String>) {
     var update: Update? = null
     while (true) {
         Thread.sleep(TG_REFRESH_TIME_IN_MILS)
-        val updates = tgBotService.getUpdates(updateId)
-        update = json.decodeFromString<Response>(updates).result.firstOrNull() ?: continue
-        println(updates)
+        update = tgBotService.getUpdates(updateId).result.firstOrNull() ?: continue
+        println(update)
         println("\n-----------------------------\n")
         println(update)
-        updateId = getUpdateId(update) + 1
+        updateId = update.updateId + 1
         val msg = getMsgText(update) ?: ""
         val chatId = getChatId(update) ?: continue
         val command = TgCommand.getTgCommandFromString(msg)
@@ -37,7 +34,7 @@ fun main(args: Array<String>) {
             }
 
             TgCommand.START -> {
-                tgBotService.sendMenu(json, chatId)
+                tgBotService.sendMenu(chatId)
             }
 
             TgCommand.UNKNOWN -> {
@@ -61,13 +58,13 @@ fun main(args: Array<String>) {
                         "Неправильно! ${question.answer.original} это ${question.answer.translated}"
                     )
                 }
-                currentQuestion = checkNextQuestionAndSend(trainer, tgBotService, chatId, json)
+                currentQuestion = checkNextQuestionAndSend(trainer, tgBotService, chatId)
             }
         }
         getData(update)?.let { btnClicked ->
             when (btnClicked) {
                 TgButtonsCallback.LEARN_WORDS -> {
-                    currentQuestion = checkNextQuestionAndSend(trainer, tgBotService, chatId, json)
+                    currentQuestion = checkNextQuestionAndSend(trainer, tgBotService, chatId)
                 }
 
                 TgButtonsCallback.STATISTICS -> {
@@ -77,6 +74,11 @@ fun main(args: Array<String>) {
                 TgButtonsCallback.UNKNOWN -> {
                     Unit
                 }
+
+                TgButtonsCallback.TG_MAIN_MENU -> {
+                    currentQuestion = null
+                    tgBotService.sendMenu(chatId)
+                }
             }
         }
     }
@@ -84,10 +86,6 @@ fun main(args: Array<String>) {
 
 private fun getMsgText(update: Update): String? {
     return update.message?.text
-}
-
-private fun getUpdateId(update: Update): Long {
-    return update.updateId
 }
 
 private fun getChatId(update: Update): Long? {
@@ -115,13 +113,12 @@ private fun checkNextQuestionAndSend(
     trainer: LearnWordsTrainer,
     telegramBotService: TelegramBotService,
     chatId: Long,
-    json: Json,
 ): Question? {
     val question = trainer.getNextQuestion()
     if (question == null) {
         telegramBotService.sendMessage(chatId, "Поздравляем, все слова выучены!")
     } else {
-        telegramBotService.sendQuestion(json, chatId, question)
+        telegramBotService.sendQuestion(chatId, question)
     }
     return question
 }
