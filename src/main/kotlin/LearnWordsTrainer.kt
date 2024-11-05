@@ -2,13 +2,23 @@ package org.example
 
 import java.io.File
 
+const val BASE_DICTIONARY_FILE_NAME = "words.txt"
+
 class LearnWordsTrainer(
     private val minCorrectAnswerCount: Int = MIN_CORRECT_ANSWER_COUNT,
     private val amountOfWrongOptions: Int = AMOUNT_OF_WRONG_OPTIONS,
+    private val fileName: String = "words.txt",
 ) {
-
-
     val dictionary = mutableListOf<Word>()
+    var currentQuestion: Question? = null
+    private val currentUserFile: File
+        get() {
+            return if (File(fileName).exists()) {
+                File(fileName)
+            } else {
+                File(BASE_DICTIONARY_FILE_NAME).copyTo(File(fileName), true)
+            }
+        }
 
     init {
         loadDictionary()
@@ -16,7 +26,8 @@ class LearnWordsTrainer(
     }
 
     private fun loadDictionary() {
-        File(FILE_NAME).readLines().forEach { wordItem ->
+
+        currentUserFile.readLines().forEach { wordItem ->
             val splitLine = wordItem.split("|")
             val correctAnswerCount = try {
                 splitLine[2].toIntOrNull() ?: 0
@@ -31,7 +42,7 @@ class LearnWordsTrainer(
     }
 
     fun saveDictionary() {
-        File(FILE_NAME).writeText(dictionary.joinToString(separator = "\n") { it.toFileString() })
+        currentUserFile.writeText(dictionary.joinToString(separator = "\n") { it.toFileString() })
     }
 
     fun getStatistics(): Statistics {
@@ -58,7 +69,19 @@ class LearnWordsTrainer(
             val optionsRemain = amountOfWrongOptions - listOfOptions.size
             listOfOptions.addAll(listOfLearnedWords.shuffled().take(optionsRemain))
         }
-        return Question(listOfOptions, answer)
+        currentQuestion = Question(listOfOptions, answer)
+        return currentQuestion
+    }
+
+    fun clearCurrentQuestion() {
+        currentQuestion = null
+    }
+
+    fun clearProgress() {
+        dictionary.replaceAll { word ->
+            word.copy(correctAnswerCount = 0)
+        }
+        saveDictionary()
     }
 
 }
