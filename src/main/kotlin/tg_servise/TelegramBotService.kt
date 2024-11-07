@@ -50,7 +50,8 @@ class TelegramBotService(private val token: String) {
                     listOf(
                         InlineKeyBoard("Учить слова", TgButtonsCallback.LEARN_WORDS.btnDataString),
                         InlineKeyBoard("Статистика", TgButtonsCallback.STATISTICS.btnDataString)
-                    )
+                    ),
+                    listOf(InlineKeyBoard("Сбросить прогресс", TgButtonsCallback.CLEAR_PROGRESS.btnDataString))
                 )
             )
         )

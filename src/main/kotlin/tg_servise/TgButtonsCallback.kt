@@ -4,8 +4,8 @@ enum class TgButtonsCallback(val btnDataString: String) {
     LEARN_WORDS(LEARN_WORDS_CLICKED),
     STATISTICS(STATISTICS_CLICKED),
     UNKNOWN(""),
-    TG_MAIN_MENU("/start")
-    ;
+    TG_MAIN_MENU("/start"),
+    CLEAR_PROGRESS("/clear");
 
     companion object {
         fun getBtnFromString(btnData: String): TgButtonsCallback {

@@ -1,6 +1,5 @@
 package org.example
 
-const val FILE_NAME = "words.txt"
 const val MIN_CORRECT_ANSWER_COUNT = 3
 const val AMOUNT_OF_WRONG_OPTIONS = 3
 
