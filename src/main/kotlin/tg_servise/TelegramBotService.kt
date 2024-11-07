@@ -1,11 +1,8 @@
 package org.example.tg_servise
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.example.Question
-import org.example.Response
 import java.net.URI
 import java.net.URLEncoder
 import java.net.http.HttpClient
@@ -89,27 +86,3 @@ class TelegramBotService(private val token: String) {
     }
 
 }
-
-@Serializable
-data class RequestMenu(
-    @SerialName("chat_id")
-    val chatId: Long,
-    @SerialName("text")
-    val text: String,
-    @SerialName("reply_markup")
-    val replyMarkup: ReplyMarkup,
-)
-
-@Serializable
-data class ReplyMarkup(
-    @SerialName("inline_keyboard")
-    val inlineKeyBoard: List<List<InlineKeyBoard>>,
-)
-
-@Serializable
-data class InlineKeyBoard(
-    @SerialName("text")
-    val text: String,
-    @SerialName("callback_data")
-    val callBackData: String,
-)
