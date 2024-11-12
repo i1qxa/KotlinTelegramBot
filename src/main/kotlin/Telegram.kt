@@ -1,11 +1,6 @@
 package org.example
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-import org.example.tg_servise.CALLBACK_DATA_ANSWER_PREFIX
-import org.example.tg_servise.TelegramBotService
-import org.example.tg_servise.TgButtonsCallback
-import org.example.tg_servise.TgCommand
+import org.example.tg_servise.*
 
 private const val TG_REFRESH_TIME_IN_MILS = 2000L
 private const val HELLO_MSG = "Hello"
@@ -131,42 +126,3 @@ private fun checkNextQuestionAndSend(
     return question
 }
 
-@Serializable
-data class Update(
-    @SerialName("update_id")
-    val updateId: Long,
-    @SerialName("message")
-    val message: Message? = null,
-    @SerialName("callback_query")
-    val callbackQuery: CallbackQuery? = null,
-)
-
-@Serializable
-data class Response(
-    @SerialName("result")
-    val result: List<Update>,
-)
-
-@Serializable
-data class Message(
-    @SerialName("message_id")
-    val messageId: Long,
-    @SerialName("chat")
-    val chat: Chat,
-    @SerialName("text")
-    val text: String,
-)
-
-@Serializable
-data class Chat(
-    @SerialName("id")
-    val chatId: Long,
-)
-
-@Serializable
-data class CallbackQuery(
-    @SerialName("message")
-    val message: Message? = null,
-    @SerialName("data")
-    val data: String,
-)
